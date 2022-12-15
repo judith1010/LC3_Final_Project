@@ -1,0 +1,6 @@
+ADD R3, R4, #1
+NOT R3, R2
+ADD R3, R3, #1
+ADD R3, R4, R5
+duhuiADDjeiofj
+R4, R2, R3 ADD
