@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
     char line[100];
     while(fgets(line, sizeof(line), in)) 
     {
+      //if its a sub
         if (strstr(line, "ADD") != NULL) fputs(line, out);
         if (strstr(line, "SUB") != NULL)
         {
