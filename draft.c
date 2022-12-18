@@ -4,6 +4,11 @@
 
 //REMOVE ALL WHITESPACE FROM LINE AND SPLIT IT UP THAT WAY 
 //HAVE TO TAKE LABELS INTO ACCOUNT
+
+//if find sub in the line, split it up and find the individual compnenents. (registers/imm5)
+//then format the new lines of lc3 code that will need 
+//write those lines to output file 
+//continue looping through lines of asm 
 int main(int argc, char *argv[])
 {
     FILE *in = fopen(argv[1], "r");
