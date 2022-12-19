@@ -1,9 +1,22 @@
 #include <stdio.h>
 #include <string.h>
 
+//try while loop: 
+//while pointer not a space, keep going add chars to an array 
+//once hit a space break out of loop and start on next var
+int sub(char line[])
+{
+    char word1[20];
+    char p = [0];
+    int i = 0;
+    while (line[p] != ' ')
+    {
+        word1[i++] = p;
+        p++;
+    }
+    printf("%s", word1);
+}
 
-//REMOVE ALL WHITESPACE FROM LINE AND SPLIT IT UP THAT WAY 
-//HAVE TO TAKE LABELS INTO ACCOUNT
 
 //if find sub in the line, split it up and find the individual compnenents. (registers/imm5)
 //then format the new lines of lc3 code that will need 
@@ -23,14 +36,14 @@ int main(int argc, char *argv[])
     char line[100];
     while(fgets(line, sizeof(line), in)) 
     {
-      //if its a sub
         if (strstr(line, "ADD") != NULL) fputs(line, out);
         if (strstr(line, "SUB") != NULL)
-        {
-            fputs("NOT R3, R2\n", out);
-            fputs("ADD R3, R3, #1\n", out);
-            fputs("ADD R3, R4, R5\n", out);
-        }
+        sub(line);
+        // {
+        //     fputs("NOT R3, R2\n", out);
+        //     fputs("ADD R3, R3, #1\n", out);
+        //     fputs("ADD R3, R4, R5\n", out);
+        // }
     }
 
     
