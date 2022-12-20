@@ -1,0 +1,16 @@
+lc3.f:
+
+DEF_INST (SUB, FMT_RRR, 0xF038, 0x1000, FLG_NONE, {
+    REG (I_DR) = (REG (I_SR1) + REG (I_SR2)) & 0xFFFF;
+    SET_CC ();
+}); 
+
+DEF_INST (SUB, FMT_RRI, 0xF020, 0x1020, FLG_NONE, {
+    REG (I_DR) = (REG (I_SR1) + (I_imm5)*(-1)) & 0xFFFF;
+    SET_CC ();
+});
+
+
+DEF_INST (RST, FMT_R, 0xFE3F, 0xC000, FLG_NONE, {
+    REG (I_BaseR) & 0;
+});

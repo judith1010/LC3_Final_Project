@@ -1,0 +1,6 @@
+	.ORIG x3000
+	AND R3, R3, #0
+	ADD R3, R3, #3
+	RST R3
+	.END
+	
