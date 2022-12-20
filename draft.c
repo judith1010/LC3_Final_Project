@@ -4,18 +4,6 @@
 //try while loop: 
 //while pointer not a space, keep going add chars to an array 
 //once hit a space break out of loop and start on next var
-int sub(char line[])
-{
-    char word1[20];
-    char p = [0];
-    int i = 0;
-    while (line[p] != ' ')
-    {
-        word1[i++] = p;
-        p++;
-    }
-    printf("%s", word1);
-}
 
 
 //if find sub in the line, split it up and find the individual compnenents. (registers/imm5)
@@ -24,8 +12,8 @@ int sub(char line[])
 //continue looping through lines of asm 
 int main(int argc, char *argv[])
 {
-    FILE *in = fopen(argv[1], "r");
-    FILE *out = fopen(argv[2], "w");
+    FILE *in = fopen("test.asm", "r");
+    FILE *out = fopen("test1.asm", "w");
 
     if (in == NULL)
     {

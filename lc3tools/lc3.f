@@ -57,7 +57,7 @@ enum opcode_t {
     OP_NONE,
 
     /* real instruction opcodes */
-    OP_ADD, OP_AND, OP_BR, OP_JMP, OP_JSR, OP_JSRR, OP_LD, OP_LDI, OP_LDR,
+    OP_ADD, OP_AND, OP_BR, OP_JMP, OP_RST, OP_JSR, OP_JSRR, OP_LD, OP_LDI, OP_LDR,
     OP_LEA, OP_NOT, OP_RTI, OP_ST, OP_STI, OP_STR, OP_TRAP, OP_SUB,
 
     /* trap pseudo-ops */
@@ -77,8 +77,8 @@ static const char* const opnames[NUM_OPS] = {
     "missing opcode",
 
     /* real instruction opcodes */
-    "ADD", "AND", "BR", "JMP", "JSR", "JSRR", "LD", "LDI", "LDR", "LEA",
-    "NOT", "RTI", "ST", "STI", "STR", "TRAP" SUB,
+    "ADD", "AND", "BR", "JMP", "RST", "JSR", "JSRR", "LD", "LDI", "LDR", "LEA",
+    "NOT", "RTI", "ST", "STI", "STR", "TRAP", "SUB",
 
     /* trap pseudo-ops */
     "GETC", "HALT", "IN", "OUT", "PUTS", "PUTSP",
@@ -109,13 +109,14 @@ enum operands_t {
 
 static const int op_format_ok[NUM_OPS] = {
     /* no opcode seen (yet) */
-    0x200, /* no opcode, no operands       */
+    0x200, /* no opcode, no operands       */ 
 
     /* real instruction formats */
-    0x003, /* ADD: RRR or RRI formats only */
-    0x003, /* AND: RRR or RRI formats only */
-    0x0C0, /* BR: I or L formats only      */
-    0x020, /* JMP: R format only           */
+    0x003, /* ADD: RRR or RRI formats only */ 
+    0x003, /* AND: RRR or RRI formats only */ 
+    0x0C0, /* BR: I or L formats only      */ 
+    0x020, /* JMP: R format only           */ 
+    0x020, /* RST R format only*/
     0x0C0, /* JSR: I or L formats only     */
     0x020, /* JSRR: R format only          */
     0x018, /* LD: RI or RL formats only    */
@@ -128,7 +129,7 @@ static const int op_format_ok[NUM_OPS] = {
     0x018, /* STI: RI or RL formats only   */
     0x002, /* STR: RRI format only         */
     0x040, /* TRAP: I format only          */
-    //FIGURE OUT WHAT THIS PART MEANS TO ADD SUB
+    0x003, /*SUB?*/
 
     /* trap pseudo-op formats (no operands) */
     0x200, /* GETC: no operands allowed    */
@@ -239,6 +240,7 @@ ADD       {inst.op = OP_ADD;   BEGIN (ls_operands);}
 AND       {inst.op = OP_AND;   BEGIN (ls_operands);}
 BR{CCODE} {inst.op = OP_BR;    parse_ccode (yytext + 2); BEGIN (ls_operands);}
 JMP       {inst.op = OP_JMP;   BEGIN (ls_operands);}
+RST       {inst.op = OP_RST;   BEGIN (ls_operands);}
 JSRR      {inst.op = OP_JSRR;  BEGIN (ls_operands);}
 JSR       {inst.op = OP_JSR;   BEGIN (ls_operands);}
 LDI       {inst.op = OP_LDI;   BEGIN (ls_operands);}
@@ -640,6 +642,9 @@ generate_instruction (operands_t operands, const char* opstr)
 	case OP_JMP:
 	    write_value (0xC000 | (r1 << 6));
 	    break;
+    case OP_RST:
+        write_value (0x5020 | (r1 & 0));  
+        break;
 	case OP_JSR:
 	    if (operands == O_I)
 	        (void)read_val (o1, &val, 11);
@@ -682,6 +687,17 @@ generate_instruction (operands_t operands, const char* opstr)
 	case OP_TRAP:
 	    (void)read_val (o1, &val, 8);
 	    write_value (0xF000 | (val & 0xFF));
+	    break;
+    case OP_SUB:
+        if (operands == O_RRI) {
+	    	/* Check or read immediate range (error in first pass
+		   prevents execution of second, so never fails). */
+	        (void)read_val (o3, &val, 5);
+		write_value (0x1020 | (r1 << 9) | (r2 << 6) | (val & 0x1F));
+	    } else
+        write_value (0x903F | (r1 << 9) | (r2 << 6));
+        write_value (0x1020 | (r1 << 9) | (r2 << 6) | (1 & 0x1F));
+		write_value (0x1000 | (r1 << 9) | (r2 << 6) | r3);
 	    break;
 
 	/* Generate trap pseudo-ops. */
