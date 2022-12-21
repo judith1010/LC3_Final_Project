@@ -694,10 +694,15 @@ generate_instruction (operands_t operands, const char* opstr)
 		   prevents execution of second, so never fails). */
 	        (void)read_val (o3, &val, 5);
 		write_value (0x1020 | (r1 << 9) | (r2 << 6) | (val & 0x1F));
+        write_value(0xFFFF);
 	    } else
-        write_value (0x903F | (r1 << 9) | (r2 << 6));
-        write_value (0x1020 | (r1 << 9) | (r2 << 6) | (1 & 0x1F));
+        {
+        write_value (0x903F | (r3 << 9) | (r3 << 6)); 
+        write_value (0x1020 | (r3 << 9) | (r3 << 6) | (1 & 0x1F));
 		write_value (0x1000 | (r1 << 9) | (r2 << 6) | r3);
+        write_value (0x903F | (r3 << 9) | (r3 << 6));  //change r3 back to original value
+        write_value (0x1020 | (r3 << 9) | (r3 << 6) | (1 & 0x1F));
+        }
 	    break;
 
 	/* Generate trap pseudo-ops. */
