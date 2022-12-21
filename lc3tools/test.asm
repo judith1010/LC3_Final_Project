@@ -1,4 +1,4 @@
 	.ORIG x3000
-	SUB R3, R3, R2
+	SUB R3, R3, #12
 	.END
 	
