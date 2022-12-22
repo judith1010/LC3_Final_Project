@@ -3607,23 +3607,32 @@ generate_instruction (operands_t operands, const char* opstr)
         write_value (0x903F | (r3 << 9) | (r3 << 6)); //negate the operand to be subtracted
         write_value (0x1020 | (r3 << 9) | (r3 << 6) | (1 & 0x1F));
 		write_value (0x1000 | (r1 << 9) | (r2 << 6) | r3); //subtract
-        write_value (0x903F | (r3 << 9) | (r3 << 6));  //change r3 back to original value
-        write_value (0x1020 | (r3 << 9) | (r3 << 6) | (1 & 0x1F));
-        write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F)); //set cc appropriately 
+        if (r1 != r3) //change r3 back to original value only if that's not where the result is stored
+        {
+            write_value (0x903F | (r3 << 9) | (r3 << 6));  
+            write_value (0x1020 | (r3 << 9) | (r3 << 6) | (1 & 0x1F));
+            write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F)); //set cc appropriately 
+        }
         }
 	    break;
     case OP_MLT:
         if (operands == O_RRI) {
-	    	/* Check or read immediate range (error in first pass
+	    	/* Check or read immediate range (error in first pass 
 		   prevents execution of second, so never fails). */
 	        (void)read_val (o3, &val, 5);
-		write_value (0x1020 | (r1 << 9) | (r2 << 6) | (val & 0x1F));
+		    write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));
+            write_value (0x1000 | (r1 << 9) | (r1 << 6) | (val & 0x1F));
+            write_value (0x1020 | (r2 << 9) | (r2 << 6) | (-1 & 0x1F));
+            write_value (inst.ccode | (0x3FD));
+            write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F)); //set cc appropriately
 	    } else
-        write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));
-        write_value (0x1000 | (r1 << 9) | (r1 << 6) | r2);
-        write_value (0x1020 | (r3 << 9) | (r3 << 6) | (-1 & 0x1F));
-        write_value (inst.ccode | (3 & 0x1FF));
-		//write_value (0x1000 | (r1 << 9) | (r2 << 6) | r3);
+        {
+            write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));
+            write_value (0x1000 | (r1 << 9) | (r1 << 6) | r2);
+            write_value (0x1020 | (r3 << 9) | (r3 << 6) | (-1 & 0x1F));
+            write_value (inst.ccode | (0x3FD));
+            write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F)); //set cc appropriately 
+        }
 	    break;
 
 	/* Generate trap pseudo-ops. */
