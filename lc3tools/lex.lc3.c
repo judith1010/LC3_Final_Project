@@ -3616,15 +3616,34 @@ generate_instruction (operands_t operands, const char* opstr)
         }
 	    break;
     case OP_MLT:
+    //reserves mem location 
         if (operands == O_RRI) {
 	    	/* Check or read immediate range (error in first pass 
 		   prevents execution of second, so never fails). */
 	        (void)read_val (o3, &val, 5);
-		    write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));
-            write_value (0x1000 | (r1 << 9) | (r1 << 6) | (val & 0x1F));
-            write_value (0x1020 | (r2 << 9) | (r2 << 6) | (-1 & 0x1F));
-            write_value (inst.ccode | (0x3FD));
-            write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F)); //set cc appropriately
+            if (val < 0)
+            {
+                write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));
+                for (int i=0; i < abs(val); i++)
+                {
+                    write_value (0x903F | (r2 << 9) | (r2 << 6));  
+                    write_value (0x1020 | (r2 << 9) | (r2 << 6) | (1 & 0x1F));
+                    write_value (0x1000 | (r1 << 9) | (r1 << 6) | r2);
+                }
+                if (r1 != r3) //change r3 back to original value only if that's not where the result is stored
+                {
+                    write_value (0x903F | (r2 << 9) | (r2 << 6));  
+                    write_value (0x1020 | (r2 << 9) | (r2 << 6) | (1 & 0x1F));
+                    write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F)); //set cc appropriately
+                }  
+            }
+            else{
+                write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));
+                for (int i=0; i < val; i++)
+                {
+                    write_value (0x1000 | (r1 << 9) | (r1 << 6) | r2);
+                }
+            }
 	    } else
         {
             write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));
@@ -3634,6 +3653,8 @@ generate_instruction (operands_t operands, const char* opstr)
             write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F)); //set cc appropriately 
         }
 	    break;
+
+        //r1, r2, r3 contain ints corresponding to the register it references
 
 	/* Generate trap pseudo-ops. */
 	case OP_GETC:  write_value (0xF020); break;
