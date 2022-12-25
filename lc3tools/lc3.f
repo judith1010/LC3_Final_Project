@@ -58,8 +58,10 @@ enum opcode_t {
 
     /* real instruction opcodes */
     OP_ADD, OP_AND, OP_BR, OP_JMP, OP_JSR, OP_JSRR, OP_LD, OP_LDI, OP_LDR,
-    OP_LEA, OP_NOT, OP_RTI, OP_ST, OP_STI, OP_STR, OP_TRAP, OP_RST, OP_SUB, 
-    OP_MLT, OP_OR, OP_ZER, OP_LDM,
+    OP_LEA, OP_NOT, OP_RTI, OP_ST, OP_STI, OP_STR, OP_TRAP, 
+    
+    /* final project added opcodes */
+    OP_RST, OP_SUB, OP_MLT, OP_OR, OP_ZER, OP_LDM, OP_SQ, 
 
     /* trap pseudo-ops */
     OP_GETC, OP_HALT, OP_IN, OP_OUT, OP_PUTS, OP_PUTSP,
@@ -79,7 +81,10 @@ static const char* const opnames[NUM_OPS] = {
 
     /* real instruction opcodes */
     "ADD", "AND", "BR", "JMP", "JSR", "JSRR", "LD", "LDI", "LDR", "LEA",
-    "NOT", "RTI", "ST", "STI", "STR", "TRAP", "RST", "SUB", "MLT", "OR", "ZER", "LDM",
+    "NOT", "RTI", "ST", "STI", "STR", "TRAP", 
+    
+    /* final project added opcodes */
+    "RST", "SUB", "MLT", "OR", "ZER", "LDM", "SQ",
 
     /* trap pseudo-ops */
     "GETC", "HALT", "IN", "OUT", "PUTS", "PUTSP",
@@ -130,13 +135,14 @@ static const int op_format_ok[NUM_OPS] = {
     0x002, /* STR: RRI format only         */
     0x040, /* TRAP: I format only          */
 
-    /* Final Project added opcodes*/
+    /* Final Project added opcodes */
     0x020, /* RST: R format only           */
     0x003, /* SUB: RRR or RRI formats only */
     0x003, /* MLT: RRR or RRI formats only */
     0x003, /* OR: RRR or RRI formats only  */
     0x200, /* ZER: no opernads allowed     */
     0x020, /* LDM: R format only           */
+    0x004, /* SQ: RR format only           */
 
     /* trap pseudo-op formats (no operands) */
     0x200, /* GETC: no operands allowed    */
@@ -260,11 +266,14 @@ STR       {inst.op = OP_STR;   BEGIN (ls_operands);}
 ST        {inst.op = OP_ST;    BEGIN (ls_operands);}
 TRAP      {inst.op = OP_TRAP;  BEGIN (ls_operands);}
 RST       {inst.op = OP_RST;   BEGIN (ls_operands);}
+
+    /* rules for final project added opcodes */
 SUB       {inst.op = OP_SUB;   BEGIN (ls_operands);}
 MLT       {inst.op = OP_MLT;   BEGIN (ls_operands);}
 OR        {inst.op = OP_OR;    BEGIN (ls_operands);}
 ZER       {inst.op = OP_ZER;   BEGIN (ls_operands);}
 LDM       {inst.op = OP_LDM;   BEGIN (ls_operands);}
+SQ        {inst.op = OP_SQ;    BEGIN (ls_operands);}
 
     /* rules for trap pseudo-ols */
 GETC      {inst.op = OP_GETC;  BEGIN (ls_operands);}
@@ -789,14 +798,56 @@ generate_instruction (operands_t operands, const char* opstr)
             for (int i=0; i<8; i++)
             write_value (0x5020 | (i << 9) | (i << 6) | (0 & 0x1F));
         break;
-        //LDM load r with whatever is 512 mem locations away
+        //LDM load r with whatever is 0x100 mem locations away
         case OP_LDM:
         write_value (0x2000 | (r1 << 9) | (0xFF & 0x1FF));
         break;
-        
-        //SQ (make sure its pos, copy into 2 temp_rs and then add temp_1 to result until temp_2 is 0)
+        //SQ (square)
+        case OP_SQ:;
+        int temp1;
+        for (int i=0; i<8; i++){
+            if (i != r1 && i != r2)
+            {
+                temp1 = i;
+                break;
+            }
+        } 
+        int temp2;
+        for (int i=0; i<8; i++){
+            if (i != r1 && i != r2 && i != temp1)
+            {
+                temp2 = i;
+                break;
+            }
+        }
+        write_value (0x3000 | (temp1 << 9) | (0x1 & 0x1FF));  // ST temp1, #1 
+        write_value (inst.ccode | (0xE01));                    // BR nzp 1
+        write_value (0x0C0); //stored value of temp1 in this line in assembly 
+        write_value (0x3000 | (temp2 << 9) | (0x1 & 0x1FF));  // ST temp2, #1 
+        write_value (inst.ccode | (0xE01));                    // BR nzp 1
+        write_value (0x0C0); //stored value of temp2 in this line in assembly 
+        write_value (0x5020 | (temp1 << 9) | (temp1 << 6) | (0 & 0x1F)); // and temp1 0
+        write_value (0x1000 | (temp1 << 9) | (temp1 << 6) | r2);  // add temp1, temp1, r2
+        write_value (0x5020 | (temp2 << 9) | (temp2 << 6) | (0 & 0x1F)); // and temp2 0
+        write_value (0x1000 | (temp2 << 9) | (temp2 << 6) | r2);  // add temp2, temp2, r2
+        write_value (0x1020 | (temp1 << 9) | (temp1 << 6) | (0 & 0x1F));  // add temp1, temp1, #0
+        write_value (inst.ccode | (0x602));                         // brzp 2  
+        write_value (0x903F | (temp1 << 9) | (temp1 << 6));       // not temp1 
+        write_value (0x1020 | (temp1 << 9) | (temp1 << 6) | (1 & 0x1F));  // add temp1, temp1, #1
+        write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));  // r1 = 0
+        write_value (0x1000 | (r1 << 9) | (r1 << 6) | temp2);          // add r1 r1 r2 
+        write_value (0x1020 | (temp1 << 9) | (temp1 << 6) | (-1 & 0x1F));  // add temp_r temp_r #-1
+        write_value (inst.ccode | (0x3FD));                         // brp #-2 (-3) 
+        write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));  // add r1 r1 0 
+        write_value (inst.ccode | (0x602));                         // brzp 2
+        write_value (0x903F | (r1 << 9) | (r1 << 6));               // not r1 r1 
+        write_value (0x1020 | (r1 << 9) | (r1 << 6) | (1 & 0x1F));  // add r1 r1 #1 
+        write_value (0x2000 | (temp1 << 9) | (-21 & 0x1FF));        //restore temp1
+        write_value (0x2000 | (temp2 << 9) | (-19 & 0x1FF));        //restore temp2
+        break;
+       
+    
 
-        //r1, r2, r3 contain ints corresponding to the register it references
 
 	/* Generate trap pseudo-ops. */
 	case OP_GETC:  write_value (0xF020); break;
