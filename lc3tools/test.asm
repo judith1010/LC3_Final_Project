@@ -1,5 +1,5 @@
-	.ORIG x3000
-    MLT R0, R1, 2
-    MLT R0, R1, -2
-	.END
+.ORIG x3000
+LDM R0
+.END
 	
+

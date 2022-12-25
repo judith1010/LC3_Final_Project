@@ -59,7 +59,7 @@ enum opcode_t {
     /* real instruction opcodes */
     OP_ADD, OP_AND, OP_BR, OP_JMP, OP_JSR, OP_JSRR, OP_LD, OP_LDI, OP_LDR,
     OP_LEA, OP_NOT, OP_RTI, OP_ST, OP_STI, OP_STR, OP_TRAP, OP_RST, OP_SUB, 
-    OP_MLT,
+    OP_MLT, OP_OR, OP_ZER, OP_LDM,
 
     /* trap pseudo-ops */
     OP_GETC, OP_HALT, OP_IN, OP_OUT, OP_PUTS, OP_PUTSP,
@@ -79,7 +79,7 @@ static const char* const opnames[NUM_OPS] = {
 
     /* real instruction opcodes */
     "ADD", "AND", "BR", "JMP", "JSR", "JSRR", "LD", "LDI", "LDR", "LEA",
-    "NOT", "RTI", "ST", "STI", "STR", "TRAP", "RST", "SUB", "MLT",
+    "NOT", "RTI", "ST", "STI", "STR", "TRAP", "RST", "SUB", "MLT", "OR", "ZER", "LDM",
 
     /* trap pseudo-ops */
     "GETC", "HALT", "IN", "OUT", "PUTS", "PUTSP",
@@ -129,9 +129,14 @@ static const int op_format_ok[NUM_OPS] = {
     0x018, /* STI: RI or RL formats only   */
     0x002, /* STR: RRI format only         */
     0x040, /* TRAP: I format only          */
+
+    /* Final Project added opcodes*/
     0x020, /* RST: R format only           */
     0x003, /* SUB: RRR or RRI formats only */
     0x003, /* MLT: RRR or RRI formats only */
+    0x003, /* OR: RRR or RRI formats only  */
+    0x200, /* ZER: no opernads allowed     */
+    0x020, /* LDM: R format only           */
 
     /* trap pseudo-op formats (no operands) */
     0x200, /* GETC: no operands allowed    */
@@ -257,6 +262,9 @@ TRAP      {inst.op = OP_TRAP;  BEGIN (ls_operands);}
 RST       {inst.op = OP_RST;   BEGIN (ls_operands);}
 SUB       {inst.op = OP_SUB;   BEGIN (ls_operands);}
 MLT       {inst.op = OP_MLT;   BEGIN (ls_operands);}
+OR        {inst.op = OP_OR;    BEGIN (ls_operands);}
+ZER       {inst.op = OP_ZER;   BEGIN (ls_operands);}
+LDM       {inst.op = OP_LDM;   BEGIN (ls_operands);}
 
     /* rules for trap pseudo-ols */
 GETC      {inst.op = OP_GETC;  BEGIN (ls_operands);}
@@ -691,7 +699,7 @@ generate_instruction (operands_t operands, const char* opstr)
 
     /* ADDED FINAL PROJ OPERATORS */
     case OP_RST:
-        write_value (0x5020 | (r1 & 0));  
+        write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));
         break;
     case OP_SUB:
         if (operands == O_RRI) {
@@ -714,7 +722,7 @@ generate_instruction (operands_t operands, const char* opstr)
         }
 	    break;
     case OP_MLT:
-    //reserves mem location 
+    //inlines to save what was in registers
         if (operands == O_RRI) {
 	    	/* Check or read immediate range (error in first pass 
 		   prevents execution of second, so never fails). */
@@ -751,10 +759,41 @@ generate_instruction (operands_t operands, const char* opstr)
             write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F)); //set cc appropriately 
         }
 	    break;
-        //OR (not (not 1 and not 2))
-        //SET (and 0, add imm5)
+        //OR 
+        case OP_OR:
+            if (operands == O_RRI) {
+	    	/* Check or read immediate range (error in first pass
+		   prevents execution of second, so never fails). */
+	        (void)read_val (o3, &val, 5);
+            val = ~val;
+            write_value (0x903F | (r1 << 9) | (r2 << 6));
+		    write_value (0x5020 | (r1 << 9) | (r1 << 6) | (val & 0x1F));
+            write_value (0x903F | (r1 << 9) | (r1 << 6));
+	    } else if (r1 == r3) { 
+            write_value (0x903F | (r1 << 9) | (r1 << 6)); 
+            write_value (0x903F | (r2 << 9) | (r2 << 6));
+            write_value (0x5000 | (r1 << 9) | (r1 << 6) | r2);
+            write_value (0x903F | (r2 << 9) | (r2 << 6)); //change r2 back to orig value
+            write_value (0x903F | (r1 << 9) | (r1 << 6));
+        }
+        else { 
+            write_value (0x903F | (r1 << 9) | (r2 << 6)); 
+            write_value (0x903F | (r3 << 9) | (r3 << 6));
+            write_value (0x5000 | (r1 << 9) | (r1 << 6) | r3);
+            write_value (0x903F | (r3 << 9) | (r3 << 6)); //change r3 back to orig value
+            write_value (0x903F | (r1 << 9) | (r1 << 6));
+        }
+	    break;
         //ZER zero out all registers 
+	    case OP_ZER:
+            for (int i=0; i<8; i++)
+            write_value (0x5020 | (i << 9) | (i << 6) | (0 & 0x1F));
+        break;
         //LDM load r with whatever is 512 mem locations away
+        case OP_LDM:
+        write_value (0x2000 | (r1 << 9) | (0xFF & 0x1FF));
+        break;
+        
         //SQ (make sure its pos, copy into 2 temp_rs and then add temp_1 to result until temp_2 is 0)
 
         //r1, r2, r3 contain ints corresponding to the register it references
