@@ -1,5 +1,5 @@
 .ORIG x3000
-SQ R1, R1
+MLT R0, R0, R0
 .END
 	
 
