@@ -3725,10 +3725,10 @@ generate_instruction (operands_t operands, const char* opstr)
             write_value (0x0C0); //stored value of temp3 in this line in assembly 
             write_value (0x5020 | (temp1 << 9) | (temp1 << 6) | (0 & 0x1F)); // and temp1 0
             write_value (0x1000 | (temp1 << 9) | (temp1 << 6) | r2);  // add temp1, temp1, r2
-            write_value (inst.ccode | (0x0413));                         // brz to end 
+            write_value (inst.ccode | (0x0414));                         // brz to end 
             write_value (0x5020 | (temp2 << 9) | (temp2 << 6) | (0 & 0x1F)); // and temp2 0
             write_value (0x1000 | (temp2 << 9) | (temp2 << 6) | r3);  // add temp2, temp2, r3
-            write_value (inst.ccode | (0x0410));                        // brz to end 
+            write_value (inst.ccode | (0x0411));                        // brz to end 
             write_value (0x5020 | (temp3 << 9) | (temp3 << 6) | (0 & 0x1F)); // and temp3 0
             write_value (0x1020 | (temp1 << 9) | (temp1 << 6) | (0 & 0x1F));  // add temp1, temp1, #0
             write_value (inst.ccode | (0x205));                         // brp 5  
@@ -3745,9 +3745,11 @@ generate_instruction (operands_t operands, const char* opstr)
             write_value (inst.ccode | (0xC02));                         // brnz 2 
             write_value (0x903F | (r1 << 9) | (r1 << 6));       // not r1 
             write_value (0x1020 | (r1 << 9) | (r1 << 6) | (1 & 0x1F));  // add r1, r1, #1
-            write_value (0x2000 | (temp1 << 9) | (-30 & 0x1FF));        //restore temp1
-            write_value (0x2000 | (temp2 << 9) | (-28 & 0x1FF));        //restore temp2
-            write_value (0x2000 | (temp3 << 9) | (-26 & 0x1FF));        //restore temp3
+            write_value (inst.ccode | (0xE01));                    // BR nzp 1
+            write_value (0x5020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F));  // r1 = 0
+            write_value (0x2000 | (temp1 << 9) | (-32 & 0x1FF));        //restore temp1
+            write_value (0x2000 | (temp2 << 9) | (-30 & 0x1FF));        //restore temp2
+            write_value (0x2000 | (temp3 << 9) | (-28 & 0x1FF));        //restore temp3
         }
 	    break;
         //OR 
