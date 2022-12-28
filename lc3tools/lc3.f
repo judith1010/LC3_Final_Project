@@ -854,7 +854,7 @@ generate_instruction (operands_t operands, const char* opstr)
             for (int i=0; i<8; i++)
             write_value (0x5020 | (i << 9) | (i << 6) | (0 & 0x1F));
         break;
-        //LDM load r with whatever is 0x100 mem locations away (use c random)
+        //LDM load r with the value of a random mem location
         case OP_LDM:
         srand(time(NULL));
         int r = rand() % 512;
