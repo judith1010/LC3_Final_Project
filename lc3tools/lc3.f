@@ -48,6 +48,7 @@ part of the label?  Currently I allow only alpha followed by alphanum and _.
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "symbol.h"
 
@@ -855,7 +856,10 @@ generate_instruction (operands_t operands, const char* opstr)
         break;
         //LDM load r with whatever is 0x100 mem locations away (use c random)
         case OP_LDM:
-        write_value (0x2000 | (r1 << 9) | (0xFF & 0x1FF));
+        srand(time(NULL));
+        int r = rand() % 512;
+        r -= 256;
+        write_value (0x2000 | (r1 << 9) | (r & 0x1FF));
         break;
         //SQ (square)
         case OP_SQ:;

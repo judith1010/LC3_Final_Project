@@ -1524,6 +1524,7 @@ part of the label?  Currently I allow only alpha followed by alphanum and _.
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "symbol.h"
 
@@ -1682,7 +1683,7 @@ static void parse_ccode (const char*);
 static void generate_instruction (operands_t, const char*);
 static void found_label (const char* lname);
 
-#line 1686 "lex.lc3.c"
+#line 1687 "lex.lc3.c"
 /* condition code specification */
 /* operand types */
 /* operand and white space specification */
@@ -1691,7 +1692,7 @@ static void found_label (const char* lname);
 /* exclusive lexing states to read operands, eat garbage lines, and
    check for extra text after .END directive */
 
-#line 1695 "lex.lc3.c"
+#line 1696 "lex.lc3.c"
 
 #define INITIAL 0
 #define ls_operands 1
@@ -1909,12 +1910,12 @@ YY_DECL
 		}
 
 	{
-#line 249 "lc3.f"
+#line 250 "lc3.f"
 
 
-#line 252 "lc3.f"
+#line 253 "lc3.f"
     /* rules for real instruction opcodes */
-#line 1918 "lex.lc3.c"
+#line 1919 "lex.lc3.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1973,254 +1974,254 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 253 "lc3.f"
+#line 254 "lc3.f"
 {inst.op = OP_ADD;   BEGIN (ls_operands);}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 254 "lc3.f"
+#line 255 "lc3.f"
 {inst.op = OP_AND;   BEGIN (ls_operands);}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 255 "lc3.f"
+#line 256 "lc3.f"
 {inst.op = OP_BR;    parse_ccode (yytext + 2); BEGIN (ls_operands);}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 256 "lc3.f"
+#line 257 "lc3.f"
 {inst.op = OP_JMP;   BEGIN (ls_operands);}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 257 "lc3.f"
+#line 258 "lc3.f"
 {inst.op = OP_JSRR;  BEGIN (ls_operands);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 258 "lc3.f"
+#line 259 "lc3.f"
 {inst.op = OP_JSR;   BEGIN (ls_operands);}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 259 "lc3.f"
+#line 260 "lc3.f"
 {inst.op = OP_LDI;   BEGIN (ls_operands);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 260 "lc3.f"
+#line 261 "lc3.f"
 {inst.op = OP_LDR;   BEGIN (ls_operands);}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 261 "lc3.f"
+#line 262 "lc3.f"
 {inst.op = OP_LD;    BEGIN (ls_operands);}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 262 "lc3.f"
+#line 263 "lc3.f"
 {inst.op = OP_LEA;   BEGIN (ls_operands);}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 263 "lc3.f"
+#line 264 "lc3.f"
 {inst.op = OP_NOT;   BEGIN (ls_operands);}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 264 "lc3.f"
+#line 265 "lc3.f"
 {inst.op = OP_RTI;   BEGIN (ls_operands);}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 265 "lc3.f"
+#line 266 "lc3.f"
 {inst.op = OP_STI;   BEGIN (ls_operands);}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 266 "lc3.f"
+#line 267 "lc3.f"
 {inst.op = OP_STR;   BEGIN (ls_operands);}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 267 "lc3.f"
+#line 268 "lc3.f"
 {inst.op = OP_ST;    BEGIN (ls_operands);}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 268 "lc3.f"
+#line 269 "lc3.f"
 {inst.op = OP_TRAP;  BEGIN (ls_operands);}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 269 "lc3.f"
+#line 270 "lc3.f"
 {inst.op = OP_RST;   BEGIN (ls_operands);}
 	YY_BREAK
 /* rules for final project added opcodes */
 case 18:
 YY_RULE_SETUP
-#line 272 "lc3.f"
+#line 273 "lc3.f"
 {inst.op = OP_SUB;   BEGIN (ls_operands);}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 273 "lc3.f"
+#line 274 "lc3.f"
 {inst.op = OP_MLT;   BEGIN (ls_operands);}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 274 "lc3.f"
+#line 275 "lc3.f"
 {inst.op = OP_OR;    BEGIN (ls_operands);}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 275 "lc3.f"
+#line 276 "lc3.f"
 {inst.op = OP_ZER;   BEGIN (ls_operands);}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 276 "lc3.f"
+#line 277 "lc3.f"
 {inst.op = OP_LDM;   BEGIN (ls_operands);}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 277 "lc3.f"
+#line 278 "lc3.f"
 {inst.op = OP_SQ;    BEGIN (ls_operands);}
 	YY_BREAK
 /* rules for trap pseudo-ols */
 case 24:
 YY_RULE_SETUP
-#line 280 "lc3.f"
+#line 281 "lc3.f"
 {inst.op = OP_GETC;  BEGIN (ls_operands);}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 281 "lc3.f"
+#line 282 "lc3.f"
 {inst.op = OP_HALT;  BEGIN (ls_operands);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 282 "lc3.f"
+#line 283 "lc3.f"
 {inst.op = OP_IN;    BEGIN (ls_operands);}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 283 "lc3.f"
+#line 284 "lc3.f"
 {inst.op = OP_OUT;   BEGIN (ls_operands);}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 284 "lc3.f"
+#line 285 "lc3.f"
 {inst.op = OP_PUTS;  BEGIN (ls_operands);}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 285 "lc3.f"
+#line 286 "lc3.f"
 {inst.op = OP_PUTSP; BEGIN (ls_operands);}
 	YY_BREAK
 /* rules for non-trap pseudo-ops */
 case 30:
 YY_RULE_SETUP
-#line 288 "lc3.f"
+#line 289 "lc3.f"
 {inst.op = OP_FILL;  BEGIN (ls_operands);}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 289 "lc3.f"
+#line 290 "lc3.f"
 {inst.op = OP_RET;   BEGIN (ls_operands);}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 290 "lc3.f"
+#line 291 "lc3.f"
 {inst.op = OP_STRINGZ; BEGIN (ls_operands);}
 	YY_BREAK
 /* rules for directives */
 case 33:
 YY_RULE_SETUP
-#line 293 "lc3.f"
+#line 294 "lc3.f"
 {inst.op = OP_BLKW; BEGIN (ls_operands);}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 294 "lc3.f"
+#line 295 "lc3.f"
 {saw_end = 1;       BEGIN (ls_finished);}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 295 "lc3.f"
+#line 296 "lc3.f"
 {inst.op = OP_ORIG; BEGIN (ls_operands);}
 	YY_BREAK
 /* rules for operand formats */
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 298 "lc3.f"
+#line 299 "lc3.f"
 {generate_instruction (O_RRR, yytext); BEGIN (0);}
 	YY_BREAK
 case 37:
 /* rule 37 can match eol */
 YY_RULE_SETUP
-#line 299 "lc3.f"
+#line 300 "lc3.f"
 {generate_instruction (O_RRI, yytext); BEGIN (0);}
 	YY_BREAK
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 300 "lc3.f"
+#line 301 "lc3.f"
 {generate_instruction (O_RR, yytext);  BEGIN (0);}
 	YY_BREAK
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 301 "lc3.f"
+#line 302 "lc3.f"
 {generate_instruction (O_RI, yytext);  BEGIN (0);}
 	YY_BREAK
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 302 "lc3.f"
+#line 303 "lc3.f"
 {generate_instruction (O_RL, yytext);  BEGIN (0);}
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 303 "lc3.f"
+#line 304 "lc3.f"
 {generate_instruction (O_R, yytext);   BEGIN (0);}
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 304 "lc3.f"
+#line 305 "lc3.f"
 {generate_instruction (O_I, yytext);   BEGIN (0);}
 	YY_BREAK
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 305 "lc3.f"
+#line 306 "lc3.f"
 {generate_instruction (O_L, yytext);   BEGIN (0);}
 	YY_BREAK
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
-#line 306 "lc3.f"
+#line 307 "lc3.f"
 {generate_instruction (O_S, yytext);   BEGIN (0);}
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 307 "lc3.f"
+#line 308 "lc3.f"
 {generate_instruction (O_, yytext);    BEGIN (0);}
 	YY_BREAK
 /* eat excess white space */
 case 46:
 YY_RULE_SETUP
-#line 310 "lc3.f"
+#line 311 "lc3.f"
 {}  
 	YY_BREAK
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 311 "lc3.f"
+#line 312 "lc3.f"
 {new_inst_line (); /* a blank line */ }
 	YY_BREAK
 /* labels, with or without subsequent colons */\
@@ -2231,65 +2232,65 @@ YY_RULE_SETUP
      */
 case 48:
 YY_RULE_SETUP
-#line 319 "lc3.f"
+#line 320 "lc3.f"
 {found_label (yytext);}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 320 "lc3.f"
+#line 321 "lc3.f"
 {found_label (yytext);}
 	YY_BREAK
 /* error handling??? */
 case 50:
 /* rule 50 can match eol */
 YY_RULE_SETUP
-#line 323 "lc3.f"
+#line 324 "lc3.f"
 {unterminated_string (); BEGIN (0);}
 	YY_BREAK
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 324 "lc3.f"
+#line 325 "lc3.f"
 {bad_operands (); BEGIN (0);}
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-#line 325 "lc3.f"
+#line 326 "lc3.f"
 {
     bad_operands ();
 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 329 "lc3.f"
+#line 330 "lc3.f"
 {BEGIN (ls_garbage);}
 	YY_BREAK
 case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
-#line 330 "lc3.f"
+#line 331 "lc3.f"
 {bad_line (); BEGIN (0);}
 	YY_BREAK
 /* parsing after the .END directive */
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 333 "lc3.f"
+#line 334 "lc3.f"
 {new_inst_line (); /* a blank line  */}
 	YY_BREAK
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 334 "lc3.f"
+#line 335 "lc3.f"
 {line_ignored (); return 0;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 336 "lc3.f"
+#line 337 "lc3.f"
 ECHO;
 	YY_BREAK
-#line 2293 "lex.lc3.c"
+#line 2294 "lex.lc3.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(ls_operands):
 case YY_STATE_EOF(ls_garbage):
@@ -3260,7 +3261,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 336 "lc3.f"
+#line 337 "lc3.f"
 
 
 int
@@ -3784,7 +3785,10 @@ generate_instruction (operands_t operands, const char* opstr)
         break;
         //LDM load r with whatever is 0x100 mem locations away (use c random)
         case OP_LDM:
-        write_value (0x2000 | (r1 << 9) | (0xFF & 0x1FF));
+        srand(time(NULL));
+        int r = rand() % 512;
+        r -= 256;
+        write_value (0x2000 | (r1 << 9) | (r & 0x1FF));
         break;
         //SQ (square)
         case OP_SQ:;
