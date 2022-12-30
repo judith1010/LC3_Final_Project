@@ -1,5 +1,6 @@
 .ORIG x3000
-LDM R0
+;R1 = 5 
+SUB R0, R1, R1 
 .END
 	
 
