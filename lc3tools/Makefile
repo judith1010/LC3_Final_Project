@@ -92,7 +92,7 @@ dist_lc3as: lc3as${EXE}
 lc3as${EXE}: lex.lc3.o symbol.o
 	${GCC} ${LDFLAGS} -o lc3as${EXE} lex.lc3.o symbol.o
 
-lex.lc3.c: lc3.f
+lex.lc3.c: lc3.f rst.h sub.h mlt.h or.h zer.h lrm.h sq.h
 	${FLEX} -i -Plc3 lc3.f
 
 dist_lc3as_clean::
