@@ -726,7 +726,7 @@ generate_instruction (operands_t operands, const char* opstr)
     case OP_LRM:
         #include "lrm.h"
         break;
-    case OP_SQ:;
+    case OP_SQ:
         #include "sq.h"
         break;
        

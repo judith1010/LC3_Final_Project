@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-int inst_out[250];
+int test_output[250];
 int idx = 0;
 
 typedef enum ccode_t ccode_t;
@@ -28,22 +28,21 @@ enum operands_t {
 };
 
 void reset(int r1) {
-    idx = 0;
-    #include "reset.h"
+    #include "rst.h"
 }
 
 void test_rst() {
     int r1 = 0;
+    idx = 0;
     
     reset(r1);
     
-    printf("RST R0 TEST\n");
-    printf("Line %d: %d\n", 0, inst_out[0]==0x5260); //FIX ME
-    printf("END TEST\n");
+    printf("TEST\nRST R0 TEST");
+    printf("Line %d: %d\n", 0, test_output[0]==0x5020); //FIX ME
+    printf("END TEST\n\n");
 }
 
-void subtract(int r1, int r2, int r3) {
-    idx = 0;
+void subtract(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[]) {
     #include "sub.h"
 }
 
@@ -51,69 +50,269 @@ void test_sub_rrr() {
     int r1 = 0;
     int r2 = 1;
     int r3 = 2;
-    operands_t operand = O_RRR;
-    subtract(r1, r2, r3);
+    int val = 0;
+    char o3[] = "#3"; //CHANGE ME
+    idx = 0;
+    operands_t operands = O_RRR;
+    inst_t inst;
+    inst.ccode = CC_;
 
-    printf("SUB R0, R1, R2 TEST\n");
-    printf("Line %d: %d\n", 0, inst_out[0]==0x92FF); //FIX ME
-    printf("Line %d: %d\n", 1, inst_out[1]==0x1261); //FIX ME
-    printf("Line %d: %d\n", 2, inst_out[2]==0x1242); //FIX ME
-    printf("END TEST\n");
+    subtract(r1, r2, r3, val, operands, inst, o3);
+
+    printf("TEST\nSUB R0, R1, R2\n");
+    printf("Line %d: %d\n", 0, test_output[0]==0x94BF); 
+    printf("Line %d: %d\n", 1, test_output[1]==0x14A1); 
+    printf("Line %d: %d\n", 2, test_output[2]==0x1042); 
+    printf("Line %d: %d\n", 3, test_output[3]==0x94BF); 
+    printf("Line %d: %d\n", 4, test_output[4]==0x14A1); 
+    printf("Line %d: %d\n", 5, test_output[5]==0x1020); 
+    printf("END TEST\n\n");
 }
 
-void multiply(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[]) {
+void test_sub_rri() { 
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 0;
+    int val = 0;
+    char o3[] = "#3"; 
     idx = 0;
+    operands_t operands = O_RRI;
+    inst_t inst;
+    inst.ccode = CC_;
+
+    subtract(r1, r2, r3, val, operands, inst, o3);
+
+    printf("TEST\nSUB R0, R1, #3\n");
+    printf("Line %d: %d\n", 0, test_output[0]==0x107D); 
+    printf("END TEST\n\n");
+}
+
+void multiply(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[]) 
+{
     #include "mlt.h"
 }
 
 void test_mlt_rrr() {
-    int r1 = 1;
-    int r2 = 2;
-    int r3 = 3;
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 2;
     int val = 0;
-    char o3[] = "#2"; //CHANGE ME
-
+    char o3[] = "#3"; //CHANGE ME
+    idx = 0;
     operands_t operands = O_RRR;
-
     inst_t inst;
     inst.ccode = CC_;
      
     multiply(r1, r2, r3, val, operands, inst, o3);
 
-    //FIX ALL OF THIS TO MATCH YOUR MLT
-    printf("MLT R0, R1, R2 TEST\n");
-    printf("Line %d: %d\n", 0, inst_out[0]==0x3002);
-    printf("Line %d: %d\n", 1, inst_out[1]==0x3802);
-    printf("Line %d: %d\n", 2, inst_out[2]==0x0E02);
-    printf("Line %d: %d\n", 3, inst_out[3]==0x0000);
-    printf("Line %d: %d\n", 4, inst_out[4]==0x0000);
-    printf("Line %d: %d\n", 5, inst_out[5]==0x10A0);
-    printf("Line %d: %d\n", 6, inst_out[6]==0x18E0);
-    printf("Line %d: %d\n", 7, inst_out[7]==0x5260);
-    printf("Line %d: %d\n", 8, inst_out[8]==0x1020);
-    printf("Line %d: %d\n", 9, inst_out[9]==0x040A);
-    printf("Line %d:: %d\n", 10, inst_out[10]==0x1920);
-    printf("Line %d: %d\n", 11, inst_out[11]==0x0408);
-    printf("Line %d: %d\n", 12, inst_out[12]==0x0204);
-    printf("Line %d: %d\n", 13, inst_out[13]==0x993F);
-    printf("Line %d: %d\n", 14, inst_out[14]==0x1921);
-    printf("Line %d: %d\n", 15, inst_out[15]==0x903F);
-    printf("Line %d: %d\n", 16, inst_out[16]==0x1021);
-    printf("Line %d: %d\n", 17, inst_out[17]==0x1240);
-    printf("Line %d: %d\n", 18, inst_out[18]==0x193F);
-    printf("Line %d: %d\n", 19, inst_out[19]==0x03FD);
-    printf("Line %d: %d\n", 20, inst_out[20]==0x21EE);
-    printf("Line %d: %d\n", 21, inst_out[21]==0x29EE);
-    printf("Line %d: %d\n", 22, inst_out[22]==0x1260);
-    printf("END TEST\n");
+    printf("TEST\nMLT R0, R1, R2\n");
+    printf("Line %d: %d\n", 0, test_output[0]==0x3601);
+    printf("Line %d: %d\n", 1, test_output[1]==0x0E01);
+    printf("Line %d: %d\n", 2, test_output[2]==0x0000);
+    printf("Line %d: %d\n", 3, test_output[3]==0x3801);
+    printf("Line %d: %d\n", 4, test_output[4]==0x0E01);
+    printf("Line %d: %d\n", 5, test_output[5]==0x0000);
+    printf("Line %d: %d\n", 6, test_output[6]==0x3A01);
+    printf("Line %d: %d\n", 7, test_output[7]==0x0E01);
+    printf("Line %d: %d\n", 8, test_output[8]==0x0000);
+    printf("Line %d: %d\n", 9, test_output[9]==0x56E0);
+    printf("Line %d: %d\n", 10, test_output[10]==0x16C1);
+    printf("Line %d: %d\n", 11, test_output[11]==0x0414);
+    printf("Line %d: %d\n", 12, test_output[12]==0x5920);
+    printf("Line %d: %d\n", 13, test_output[13]==0x1902);
+    printf("Line %d: %d\n", 14, test_output[14]==0x0411);
+    printf("Line %d: %d\n", 15, test_output[15]==0x5B60);
+    printf("Line %d: %d\n", 16, test_output[16]==0x16E0);
+    printf("Line %d: %d\n", 17, test_output[17]==0x0205);
+    printf("Line %d: %d\n", 18, test_output[18]==0x96FF);
+    printf("Line %d: %d\n", 19, test_output[19]==0x16E1);
+    printf("Line %d: %d\n", 20, test_output[20]==0x1920);
+    printf("Line %d: %d\n", 21, test_output[21]==0x0602);
+    printf("Line %d: %d\n", 22, test_output[22]==0x1B61);
+    printf("Line %d: %d\n", 23, test_output[23]==0x5020);
+    printf("Line %d: %d\n", 24, test_output[24]==0x1004);
+    printf("Line %d: %d\n", 25, test_output[25]==0x16FF);
+    printf("Line %d: %d\n", 26, test_output[26]==0x03FD);
+    printf("Line %d: %d\n", 27, test_output[27]==0x1B60);
+    printf("Line %d: %d\n", 28, test_output[28]==0x0C02);
+    printf("Line %d: %d\n", 29, test_output[29]==0x903F);
+    printf("Line %d: %d\n", 30, test_output[30]==0x1021);
+    printf("Line %d: %d\n", 31, test_output[31]==0x0E01);
+    printf("Line %d: %d\n", 32, test_output[32]==0x5020);
+    printf("Line %d: %d\n", 33, test_output[33]==0x27E0);
+    printf("Line %d: %d\n", 34, test_output[34]==0x29E2);
+    printf("Line %d: %d\n", 35, test_output[35]==0x2BE4);
+    printf("END TEST\n\n");
 }
 
+void test_mlt_rri() {
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 2;
+    int val = 0;
+    char o3[] = "#3"; //CHANGE ME
+    idx = 0;
+    operands_t operands = O_RRI;
+    inst_t inst;
+    inst.ccode = CC_;
+     
+    multiply(r1, r2, r3, val, operands, inst, o3);
 
+    printf("TEST\nMLT R0, R1, #3\n");
+    printf("Line %d: %d\n", 0, test_output[0]==0x3401);
+    printf("Line %d: %d\n", 1, test_output[1]==0x0E01);
+    printf("Line %d: %d\n", 2, test_output[2]==0x0000);
+    printf("Line %d: %d\n", 3, test_output[3]==0x5020);
+    printf("Line %d: %d\n", 4, test_output[4]==0x1001);
+    printf("Line %d: %d\n", 5, test_output[5]==0x1001);
+    printf("Line %d: %d\n", 6, test_output[6]==0x1001);
+    printf("Line %d: %d\n", 7, test_output[7]==0x25FA);
+    printf("END TEST\n\n");
+}
+
+void or(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
+{
+    #include "or.h"
+}
+
+void test_or_rrr() 
+{ 
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 2;
+    int val = 0;
+    char o3[] = "#3"; 
+    idx = 0;
+    operands_t operands = O_RRR;
+    inst_t inst;
+    inst.ccode = CC_;
+
+    or(r1, r2, r3, val, operands, inst, o3);
+
+    printf("TEST\nOR R0, R1, R2\n");
+    printf("Line %d: %d\n", 0, test_output[0]==0x907F); 
+    printf("Line %d: %d\n", 1, test_output[1]==0x94BF); 
+    printf("Line %d: %d\n", 2, test_output[2]==0x5002); 
+    printf("Line %d: %d\n", 3, test_output[3]==0x94BF); 
+    printf("Line %d: %d\n", 4, test_output[4]==0x903F); 
+    printf("END TEST\n\n");
+}
+
+void test_or_rri() 
+{ 
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 2;
+    int val = 0;
+    char o3[] = "#3"; 
+    idx = 0;
+    operands_t operands = O_RRI;
+    inst_t inst;
+    inst.ccode = CC_;
+
+    or(r1, r2, r3, val, operands, inst, o3);
+
+    printf("TEST\nOR R0, R1, #3\n");
+    printf("Line %d: %d\n", 0, test_output[0]==0x907F); 
+    printf("Line %d: %d\n", 1, test_output[1]==0x503C); 
+    printf("Line %d: %d\n", 2, test_output[2]==0x903F); 
+    printf("END TEST\n\n");
+}
+
+void zer(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
+{
+    #include "zer.h"
+}
+
+void test_zer()
+{
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 2;
+    int val = 0;
+    char o3[] = "#3";
+    idx = 0;
+    operands_t operands = O_RRR;
+    inst_t inst;
+    inst.ccode = CC_;
+
+    zer(r1, r2, r3, val, operands, inst, o3);
+
+    printf("TEST\nZER\n");
+    printf("Line %d: %d\n", 0, test_output[0]==0x5020); 
+    printf("Line %d: %d\n", 1, test_output[1]==0x5260); 
+    printf("Line %d: %d\n", 2, test_output[2]==0x54A0); 
+    printf("Line %d: %d\n", 3, test_output[3]==0x56E0); 
+    printf("Line %d: %d\n", 4, test_output[4]==0x5920); 
+    printf("Line %d: %d\n", 5, test_output[5]==0x5B60); 
+    printf("Line %d: %d\n", 6, test_output[6]==0x5DA0); 
+    printf("Line %d: %d\n", 7, test_output[7]==0x5FE0); 
+    printf("END TEST\n\n");
+}
+
+void sq(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
+{
+    #include "sq.h"
+}
+
+void test_sq_rr()
+{
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 2;
+    int val = 0;
+    char o3[] = "#3"; 
+    idx = 0;
+    operands_t operands = O_RRR;
+    inst_t inst;
+    inst.ccode = CC_;
+     
+    sq(r1, r2, r3, val, operands, inst, o3);
+
+    printf("TEST\nSQ R0, R1\n");
+    printf("Line %d: %d\n", 0, test_output[0]==0x3401);
+    printf("Line %d: %d\n", 1, test_output[1]==0x0E01);
+    printf("Line %d: %d\n", 2, test_output[2]==0x0000);
+    printf("Line %d: %d\n", 3, test_output[3]==0x3601);
+    printf("Line %d: %d\n", 4, test_output[4]==0x0E01);
+    printf("Line %d: %d\n", 5, test_output[5]==0x0000);
+    printf("Line %d: %d\n", 6, test_output[6]==0x3801);
+    printf("Line %d: %d\n", 7, test_output[7]==0x0E01);
+    printf("Line %d: %d\n", 8, test_output[8]==0x0000);
+    printf("Line %d: %d\n", 9, test_output[9]==0x54A0);
+    printf("Line %d: %d\n", 10, test_output[10]==0x1481);
+    printf("Line %d: %d\n", 11, test_output[11]==0x0414);
+    printf("Line %d: %d\n", 12, test_output[12]==0x56E0);
+    printf("Line %d: %d\n", 13, test_output[13]==0x16C1);
+    printf("Line %d: %d\n", 14, test_output[14]==0x0411);
+    printf("Line %d: %d\n", 15, test_output[15]==0x5920);
+    printf("Line %d: %d\n", 16, test_output[16]==0x14A0);
+    printf("Line %d: %d\n", 17, test_output[17]==0x0205);
+    printf("Line %d: %d\n", 18, test_output[18]==0x94BF);
+    printf("Line %d: %d\n", 19, test_output[19]==0x14A1);
+    printf("Line %d: %d\n", 20, test_output[20]==0x16E0);
+    printf("Line %d: %d\n", 21, test_output[21]==0x0602);
+    printf("Line %d: %d\n", 22, test_output[22]==0x1921);
+    printf("Line %d: %d\n", 23, test_output[23]==0x5020);
+    printf("Line %d: %d\n", 24, test_output[24]==0x1003);
+    printf("Line %d: %d\n", 25, test_output[25]==0x14BF);
+    printf("Line %d: %d\n", 26, test_output[26]==0x03FD);
+    printf("Line %d: %d\n", 27, test_output[27]==0x1920);
+    printf("Line %d: %d\n", 28, test_output[28]==0x0C02);
+    printf("Line %d: %d\n", 29, test_output[29]==0x903F);
+    printf("Line %d: %d\n", 30, test_output[30]==0x1021);
+    printf("Line %d: %d\n", 31, test_output[31]==0x0E01);
+    printf("Line %d: %d\n", 32, test_output[32]==0x5020);
+    printf("Line %d: %d\n", 33, test_output[33]==0x25E0);
+    printf("Line %d: %d\n", 34, test_output[34]==0x27E2);
+    printf("Line %d: %d\n", 35, test_output[35]==0x29E4);
+    printf("END TEST\n\n");
+}
 
 //simplified write_value for testing purposes
 void write_value (int val)
 {
-    inst_out[idx] = val;
+    test_output[idx] = val;
     idx++;
 }
 
@@ -142,6 +341,17 @@ int read_val(const char* s, int* vptr, int bits) {
 
 
 
-int main(void) {
+int main(void) 
+{
+    test_rst();
+    test_sub_rrr();
+    test_sub_rri();
     test_mlt_rrr();
+    test_mlt_rri();
+    test_or_rrr();
+    test_or_rri();
+    test_zer();
+    test_sq_rr();
+
+    //LRM CAN'T BE TESTED B/C IT INVOLVES RANDOM NUMBERS
 }

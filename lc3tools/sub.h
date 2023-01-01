@@ -18,7 +18,7 @@ else if (r2 == r3) //if being subtracted from self
     } 
     write_value (0x3000 | (temp << 9) | (0x1 & 0x1FF));  // ST temp, #1 
     write_value (inst.ccode | (0xE01));                    // BR nzp 1
-    write_value (0x0C0); //stored value of temp1 in this line in assembly
+    write_value (0x000); //stored value of temp in this line in assembly
     write_value (0x5020 | (temp << 9) | (temp << 6) | (0 & 0x1F)); // and temp 0
     write_value (0x1000 | (temp << 9) | (temp << 6) | r2);  // add temp, temp, r2
     write_value (0x903F | (temp << 9) | (temp << 6)); //negate temp
