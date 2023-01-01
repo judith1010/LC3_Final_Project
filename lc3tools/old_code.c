@@ -41,3 +41,35 @@ write_value (0x903F | (r1 << 9) | (r1 << 6));               // not r1 r1
 write_value (0x1020 | (r1 << 9) | (r1 << 6) | (1 & 0x1F));  // add r1 r1 #1 
 write_value (0x2000 | (temp1 << 9) | (-21 & 0x1FF));        //restore temp1
 write_value (0x2000 | (temp2 << 9) | (-19 & 0x1FF));        //restore temp2
+
+//MLT if val < 0
+//change r2 back to original value only if that's not where the result is stored
+if (r1 != r2) 
+{
+    write_value (0x903F | (r2 << 9) | (r2 << 6));
+    lines++;  
+    write_value (0x1020 | (r2 << 9) | (r2 << 6) | (1 & 0x1F));
+    lines++;
+    write_value (0x1020 | (r1 << 9) | (r1 << 6) | (0 & 0x1F)); //set cc appropriately
+    lines++;
+}  
+
+
+//SUB if subtracted from self 
+ int temp;
+    for (int i=0; i<8; i++){
+        if (i != r1 && i != r2)
+        {
+            temp = i;
+            break;
+        }
+    } 
+    write_value (0x3000 | (temp << 9) | (0x1 & 0x1FF));  // ST temp, #1 
+    write_value (inst.ccode | (0xE01));                    // BR nzp 1
+    write_value (0x000); //stored value of temp in this line in assembly
+    write_value (0x5020 | (temp << 9) | (temp << 6) | (0 & 0x1F)); // and temp 0
+    write_value (0x1000 | (temp << 9) | (temp << 6) | r2);  // add temp, temp, r2
+    write_value (0x903F | (temp << 9) | (temp << 6)); //negate temp
+    write_value (0x1020 | (temp << 9) | (temp << 6) | (1 & 0x1F));
+    write_value (0x1000 | (r1 << 9) | (r2 << 6) | temp); //subtract
+    write_value (0x2000 | (temp << 9) | (-7 & 0x1FF));        //restore temp

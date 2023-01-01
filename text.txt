@@ -1,4 +1,0 @@
-Hello this is a text file
-It has diff lines of text 
-just to use for reading in text in c
-yo yo yo

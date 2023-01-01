@@ -1,4 +1,9 @@
+#include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <time.h>
 
 int test_output[250];
 int idx = 0;
@@ -13,7 +18,6 @@ enum ccode_t {
 
 typedef struct inst_t inst_t;
 struct inst_t {
-    // opcode_t op;
     ccode_t  ccode;
 };
 
@@ -37,8 +41,8 @@ void test_rst() {
     
     reset(r1);
     
-    printf("TEST\nRST R0 TEST");
-    printf("Line %d: %d\n", 0, test_output[0]==0x5020); //FIX ME
+    printf("TEST\nRST R0\n");
+    printf("Line %d: %d\n", 0, test_output[0]==0x5020); 
     printf("END TEST\n\n");
 }
 
@@ -353,5 +357,5 @@ int main(void)
     test_zer();
     test_sq_rr();
 
-    //LRM CAN'T BE TESTED B/C IT INVOLVES RANDOM NUMBERS
+    //LRM CAN'T BE TESTED BECAUSE IT INVOLVES RANDOM NUMBERS
 }
