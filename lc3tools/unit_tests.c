@@ -32,11 +32,39 @@ enum operands_t {
     NUM_OPERANDS
 };
 
-void reset(int r1) {
+
+void reset(int r1) 
+{
     #include "rst.h"
 }
 
-void test_rst() {
+void subtract(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[]) {
+    #include "sub.h"
+}
+
+void multiply(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[]) 
+{
+    #include "mlt.h"
+}
+
+void or(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
+{
+    #include "or.h"
+}
+
+void zer(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
+{
+    #include "zer.h"
+}
+
+void sq(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
+{
+    #include "sq.h"
+}
+
+
+void test_rst() 
+{
     int r1 = 0;
     idx = 0;
     int pass = 0;
@@ -50,11 +78,8 @@ void test_rst() {
     else printf("PASSED\n");
 }
 
-void subtract(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[]) {
-    #include "sub.h"
-}
-
-void test_sub_rrr() { 
+void test_sub_rrr() 
+{ 
     int r1 = 0;
     int r2 = 1;
     int r3 = 2;
@@ -82,7 +107,57 @@ void test_sub_rrr() {
 
 }
 
-void test_sub_rri() { 
+void test_sub_rrr_subtract_from_self() 
+{ 
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 1;
+    int val = 0;
+    char o3[] = "#3"; 
+    idx = 0;
+    operands_t operands = O_RRR;
+    inst_t inst;
+    inst.ccode = CC_;
+
+    int pass = 0;
+
+    subtract(r1, r2, r3, val, operands, inst, o3);
+
+    printf("SUB R0, R1, R1: ");
+
+    pass += test_output[0]==0x5020;
+    if (pass < 1) printf("FAILED\n");
+    else printf("PASSED\n");
+}
+
+void test_sub_rrr_non_distinct() 
+{ 
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 0;
+    int val = 0;
+    char o3[] = "#3"; 
+    idx = 0;
+    operands_t operands = O_RRR;
+    inst_t inst;
+    inst.ccode = CC_;
+
+    int pass = 0;
+
+    subtract(r1, r2, r3, val, operands, inst, o3);
+
+    printf("SUB R0, R1, R0: ");
+    pass += test_output[0]==0x903F;
+    pass += test_output[1]==0x1021;
+    pass += test_output[2]==0x1040;
+
+    if (pass < 3) printf("FAILED\n");
+    else printf("PASSED\n");
+
+}
+
+void test_sub_rri() 
+{ 
     int r1 = 0;
     int r2 = 1;
     int r3 = 0;
@@ -104,17 +179,13 @@ void test_sub_rri() {
     else printf("PASSED\n");
 }
 
-void multiply(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[]) 
+void test_mlt_rrr() 
 {
-    #include "mlt.h"
-}
-
-void test_mlt_rrr() {
     int r1 = 0;
     int r2 = 1;
     int r3 = 2;
     int val = 0;
-    char o3[] = "#3"; //CHANGE ME
+    char o3[] = "#3"; 
     idx = 0;
     operands_t operands = O_RRR;
     inst_t inst;
@@ -166,12 +237,13 @@ void test_mlt_rrr() {
     else printf("PASSED\n");
 }
 
-void test_mlt_rri() {
+void test_mlt_rri_pos() 
+{
     int r1 = 0;
     int r2 = 1;
     int r3 = 2;
     int val = 0;
-    char o3[] = "#3"; //CHANGE ME
+    char o3[] = "#3"; 
     idx = 0;
     operands_t operands = O_RRI;
     inst_t inst;
@@ -195,10 +267,38 @@ void test_mlt_rri() {
     else printf("PASSED\n");
 }
 
-
-void or(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
+void test_mlt_rri_neg() 
 {
-    #include "or.h"
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 2;
+    int val = 0;
+    char o3[] = "#-3"; 
+    idx = 0;
+    operands_t operands = O_RRI;
+    inst_t inst;
+    inst.ccode = CC_;
+
+    int pass = 0; 
+     
+    multiply(r1, r2, r3, val, operands, inst, o3);
+
+    printf("MLT R0, R1, #-3: ");
+    pass += test_output[0]==0x3401;
+    pass += test_output[1]==0x0E01;
+    pass += test_output[2]==0x0000;
+    pass += test_output[3]==0x54A0;
+    pass += test_output[4]==0x1481;
+    pass += test_output[5]==0x5020;
+    pass += test_output[6]==0x94bF;
+    pass += test_output[7]==0x14A1;
+    pass += test_output[8]==0x1002;
+    pass += test_output[9]==0x1002;
+    pass += test_output[10]==0x1002;
+    pass += test_output[11]==0x25F6;
+
+    if (pass < 8) printf("FAILED\n");
+    else printf("PASSED\n");
 }
 
 void test_or_rrr() 
@@ -228,6 +328,32 @@ void test_or_rrr()
     else printf("PASSED\n");
 }
 
+void test_or_rrr_non_distinct() 
+{ 
+    int r1 = 0;
+    int r2 = 1;
+    int r3 = 0;
+    int val = 0;
+    char o3[] = "#3"; 
+    idx = 0;
+    operands_t operands = O_RRR;
+    inst_t inst;
+    inst.ccode = CC_;
+
+    int pass = 0;
+
+    or(r1, r2, r3, val, operands, inst, o3);
+
+    printf("OR R0, R1, R0: ");
+    pass += test_output[0]==0x903F;
+    pass += test_output[1]==0x927F;
+    pass += test_output[2]==0x5001;
+    pass += test_output[3]==0x927F;
+    pass += test_output[4]==0x903F;
+
+    if (pass < 5) printf("FAILED\n");
+    else printf("PASSED\n");
+}
 
 void test_or_rri() 
 { 
@@ -252,11 +378,6 @@ void test_or_rri()
 
     if (pass < 3) printf("FAILED\n");
     else printf("PASSED\n");
-}
-
-void zer(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
-{
-    #include "zer.h"
 }
 
 void test_zer()
@@ -289,11 +410,6 @@ void test_zer()
     else printf("PASSED\n");
 }
 
-void sq(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
-{
-    #include "sq.h"
-}
-
 void test_sq_rr()
 {
     int r1 = 0;
@@ -310,7 +426,7 @@ void test_sq_rr()
      
     sq(r1, r2, r3, val, operands, inst, o3);
 
-    printf("MLT R0, R1, R2: ");
+    printf("SQ R0, R1: ");
     pass += test_output[0]==0x3401;
     pass += test_output[1]==0x0E01;
     pass += test_output[2]==0x0000;
@@ -352,6 +468,7 @@ void test_sq_rr()
     else printf("PASSED\n");
 }
 
+
 //simplified write_value for testing purposes
 void write_value (int val)
 {
@@ -359,7 +476,7 @@ void write_value (int val)
     idx++;
 }
 
-// simplified read_val for testing purposes
+// read_val for testing purposes
 int read_val(const char* s, int* vptr, int bits) {
     char* trash;
     long v;
@@ -388,10 +505,14 @@ int main(void)
 {
     test_rst();
     test_sub_rrr();
+    test_sub_rrr_subtract_from_self();
+    test_sub_rrr_non_distinct();
     test_sub_rri();
     test_mlt_rrr();
-    test_mlt_rri();
+    test_mlt_rri_pos();
+    test_mlt_rri_neg(); 
     test_or_rrr();
+    test_or_rrr_non_distinct();
     test_or_rri();
     test_zer();
     test_sq_rr();
