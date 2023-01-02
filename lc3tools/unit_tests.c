@@ -22,6 +22,7 @@ struct inst_t {
 };
 
 
+
 typedef enum operands_t operands_t;
 enum operands_t {
     O_RRR, O_RRI,
@@ -38,12 +39,15 @@ void reset(int r1) {
 void test_rst() {
     int r1 = 0;
     idx = 0;
+    int pass = 0;
     
     reset(r1);
-    
-    printf("TEST\nRST R0\n");
-    printf("Line %d: %d\n", 0, test_output[0]==0x5020); 
-    printf("END TEST\n\n");
+
+    printf("RST RO: ");
+
+    pass += test_output[0]==0x5020;
+    if (pass < 1) printf("FAILED\n");
+    else printf("PASSED\n");
 }
 
 void subtract(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[]) {
@@ -55,22 +59,27 @@ void test_sub_rrr() {
     int r2 = 1;
     int r3 = 2;
     int val = 0;
-    char o3[] = "#3"; //CHANGE ME
+    char o3[] = "#3"; 
     idx = 0;
     operands_t operands = O_RRR;
     inst_t inst;
     inst.ccode = CC_;
 
+    int pass = 0;
+
     subtract(r1, r2, r3, val, operands, inst, o3);
 
-    printf("TEST\nSUB R0, R1, R2\n");
-    printf("Line %d: %d\n", 0, test_output[0]==0x94BF); 
-    printf("Line %d: %d\n", 1, test_output[1]==0x14A1); 
-    printf("Line %d: %d\n", 2, test_output[2]==0x1042); 
-    printf("Line %d: %d\n", 3, test_output[3]==0x94BF); 
-    printf("Line %d: %d\n", 4, test_output[4]==0x14A1); 
-    printf("Line %d: %d\n", 5, test_output[5]==0x1020); 
-    printf("END TEST\n\n");
+    printf("SUB R0, R1, R2: ");
+    pass += test_output[0]==0x94BF;
+    pass += test_output[1]==0x14A1;
+    pass += test_output[2]==0x1042;
+    pass += test_output[3]==0x94BF;
+    pass += test_output[4]==0x14A1;
+    pass += test_output[5]==0x1020;
+
+    if (pass < 6) printf("FAILED\n");
+    else printf("PASSED\n");
+
 }
 
 void test_sub_rri() { 
@@ -84,11 +93,15 @@ void test_sub_rri() {
     inst_t inst;
     inst.ccode = CC_;
 
+    int pass = 0;
+
     subtract(r1, r2, r3, val, operands, inst, o3);
 
-    printf("TEST\nSUB R0, R1, #3\n");
-    printf("Line %d: %d\n", 0, test_output[0]==0x107D); 
-    printf("END TEST\n\n");
+    printf("SUB R0, R1, #3: ");
+
+    pass += test_output[0]==0x107D;
+    if (pass < 1) printf("FAILED\n");
+    else printf("PASSED\n");
 }
 
 void multiply(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[]) 
@@ -106,47 +119,51 @@ void test_mlt_rrr() {
     operands_t operands = O_RRR;
     inst_t inst;
     inst.ccode = CC_;
+
+    int pass = 0;
      
     multiply(r1, r2, r3, val, operands, inst, o3);
 
-    printf("TEST\nMLT R0, R1, R2\n");
-    printf("Line %d: %d\n", 0, test_output[0]==0x3601);
-    printf("Line %d: %d\n", 1, test_output[1]==0x0E01);
-    printf("Line %d: %d\n", 2, test_output[2]==0x0000);
-    printf("Line %d: %d\n", 3, test_output[3]==0x3801);
-    printf("Line %d: %d\n", 4, test_output[4]==0x0E01);
-    printf("Line %d: %d\n", 5, test_output[5]==0x0000);
-    printf("Line %d: %d\n", 6, test_output[6]==0x3A01);
-    printf("Line %d: %d\n", 7, test_output[7]==0x0E01);
-    printf("Line %d: %d\n", 8, test_output[8]==0x0000);
-    printf("Line %d: %d\n", 9, test_output[9]==0x56E0);
-    printf("Line %d: %d\n", 10, test_output[10]==0x16C1);
-    printf("Line %d: %d\n", 11, test_output[11]==0x0414);
-    printf("Line %d: %d\n", 12, test_output[12]==0x5920);
-    printf("Line %d: %d\n", 13, test_output[13]==0x1902);
-    printf("Line %d: %d\n", 14, test_output[14]==0x0411);
-    printf("Line %d: %d\n", 15, test_output[15]==0x5B60);
-    printf("Line %d: %d\n", 16, test_output[16]==0x16E0);
-    printf("Line %d: %d\n", 17, test_output[17]==0x0205);
-    printf("Line %d: %d\n", 18, test_output[18]==0x96FF);
-    printf("Line %d: %d\n", 19, test_output[19]==0x16E1);
-    printf("Line %d: %d\n", 20, test_output[20]==0x1920);
-    printf("Line %d: %d\n", 21, test_output[21]==0x0602);
-    printf("Line %d: %d\n", 22, test_output[22]==0x1B61);
-    printf("Line %d: %d\n", 23, test_output[23]==0x5020);
-    printf("Line %d: %d\n", 24, test_output[24]==0x1004);
-    printf("Line %d: %d\n", 25, test_output[25]==0x16FF);
-    printf("Line %d: %d\n", 26, test_output[26]==0x03FD);
-    printf("Line %d: %d\n", 27, test_output[27]==0x1B60);
-    printf("Line %d: %d\n", 28, test_output[28]==0x0C02);
-    printf("Line %d: %d\n", 29, test_output[29]==0x903F);
-    printf("Line %d: %d\n", 30, test_output[30]==0x1021);
-    printf("Line %d: %d\n", 31, test_output[31]==0x0E01);
-    printf("Line %d: %d\n", 32, test_output[32]==0x5020);
-    printf("Line %d: %d\n", 33, test_output[33]==0x27E0);
-    printf("Line %d: %d\n", 34, test_output[34]==0x29E2);
-    printf("Line %d: %d\n", 35, test_output[35]==0x2BE4);
-    printf("END TEST\n\n");
+    printf("MLT R0, R1, R2: ");
+    pass += test_output[0]==0x3601;
+    pass += test_output[1]==0x0E01;
+    pass += test_output[2]==0x0000;
+    pass += test_output[3]==0x3801;
+    pass += test_output[4]==0x0E01;
+    pass += test_output[5]==0x0000;
+    pass += test_output[6]==0x3A01;
+    pass += test_output[7]==0x0E01;
+    pass += test_output[8]==0x0000;
+    pass += test_output[9]==0x56E0;
+    pass += test_output[10]==0x16C1;
+    pass += test_output[11]==0x0414;
+    pass += test_output[12]==0x5920;
+    pass += test_output[13]==0x1902;
+    pass += test_output[14]==0x0411;
+    pass += test_output[15]==0x5B60;
+    pass += test_output[16]==0x16E0;
+    pass += test_output[17]==0x0205; 
+    pass += test_output[18]==0x96FF; 
+    pass += test_output[19]==0x16E1;
+    pass += test_output[20]==0x1920;
+    pass += test_output[21]==0x0602; 
+    pass += test_output[22]==0x1B61; 
+    pass += test_output[23]==0x5020;
+    pass += test_output[24]==0x1004;
+    pass += test_output[25]==0x16FF;
+    pass += test_output[26]==0x03FD;
+    pass += test_output[27]==0x1B60;
+    pass += test_output[28]==0x0C02;
+    pass += test_output[29]==0x903F;
+    pass += test_output[30]==0x1021;
+    pass += test_output[31]==0x0E01;
+    pass += test_output[32]==0x5020;
+    pass += test_output[33]==0x27E0;
+    pass += test_output[34]==0x29E2;
+    pass += test_output[35]==0x2BE4;
+
+    if (pass < 36) printf("FAILED\n");
+    else printf("PASSED\n");
 }
 
 void test_mlt_rri() {
@@ -159,20 +176,25 @@ void test_mlt_rri() {
     operands_t operands = O_RRI;
     inst_t inst;
     inst.ccode = CC_;
+
+    int pass = 0; 
      
     multiply(r1, r2, r3, val, operands, inst, o3);
 
-    printf("TEST\nMLT R0, R1, #3\n");
-    printf("Line %d: %d\n", 0, test_output[0]==0x3401);
-    printf("Line %d: %d\n", 1, test_output[1]==0x0E01);
-    printf("Line %d: %d\n", 2, test_output[2]==0x0000);
-    printf("Line %d: %d\n", 3, test_output[3]==0x5020);
-    printf("Line %d: %d\n", 4, test_output[4]==0x1001);
-    printf("Line %d: %d\n", 5, test_output[5]==0x1001);
-    printf("Line %d: %d\n", 6, test_output[6]==0x1001);
-    printf("Line %d: %d\n", 7, test_output[7]==0x25FA);
-    printf("END TEST\n\n");
+    printf("MLT R0, R1, #3: ");
+    pass += test_output[0]==0x3401;
+    pass += test_output[1]==0x0E01;
+    pass += test_output[2]==0x0000;
+    pass += test_output[3]==0x5020;
+    pass += test_output[4]==0x1001;
+    pass += test_output[5]==0x1001;
+    pass += test_output[6]==0x1001;
+    pass += test_output[7]==0x25FA;
+
+    if (pass < 8) printf("FAILED\n");
+    else printf("PASSED\n");
 }
+
 
 void or(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
 {
@@ -191,16 +213,21 @@ void test_or_rrr()
     inst_t inst;
     inst.ccode = CC_;
 
+    int pass = 0;
+
     or(r1, r2, r3, val, operands, inst, o3);
 
-    printf("TEST\nOR R0, R1, R2\n");
-    printf("Line %d: %d\n", 0, test_output[0]==0x907F); 
-    printf("Line %d: %d\n", 1, test_output[1]==0x94BF); 
-    printf("Line %d: %d\n", 2, test_output[2]==0x5002); 
-    printf("Line %d: %d\n", 3, test_output[3]==0x94BF); 
-    printf("Line %d: %d\n", 4, test_output[4]==0x903F); 
-    printf("END TEST\n\n");
+    printf("OR R0, R1, R2: ");
+    pass += test_output[0]==0x907F;
+    pass += test_output[1]==0x94BF;
+    pass += test_output[2]==0x5002;
+    pass += test_output[3]==0x94BF;
+    pass += test_output[4]==0x903F;
+
+    if (pass < 5) printf("FAILED\n");
+    else printf("PASSED\n");
 }
+
 
 void test_or_rri() 
 { 
@@ -214,13 +241,17 @@ void test_or_rri()
     inst_t inst;
     inst.ccode = CC_;
 
+    int pass = 0;
+
     or(r1, r2, r3, val, operands, inst, o3);
 
-    printf("TEST\nOR R0, R1, #3\n");
-    printf("Line %d: %d\n", 0, test_output[0]==0x907F); 
-    printf("Line %d: %d\n", 1, test_output[1]==0x503C); 
-    printf("Line %d: %d\n", 2, test_output[2]==0x903F); 
-    printf("END TEST\n\n");
+    printf("OR R0, R1, #3: ");
+    pass += test_output[0]==0x907F;
+    pass += test_output[1]==0x503C;
+    pass += test_output[2]==0x903F;
+
+    if (pass < 3) printf("FAILED\n");
+    else printf("PASSED\n");
 }
 
 void zer(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
@@ -240,18 +271,22 @@ void test_zer()
     inst_t inst;
     inst.ccode = CC_;
 
+    int pass = 0;
+
     zer(r1, r2, r3, val, operands, inst, o3);
 
-    printf("TEST\nZER\n");
-    printf("Line %d: %d\n", 0, test_output[0]==0x5020); 
-    printf("Line %d: %d\n", 1, test_output[1]==0x5260); 
-    printf("Line %d: %d\n", 2, test_output[2]==0x54A0); 
-    printf("Line %d: %d\n", 3, test_output[3]==0x56E0); 
-    printf("Line %d: %d\n", 4, test_output[4]==0x5920); 
-    printf("Line %d: %d\n", 5, test_output[5]==0x5B60); 
-    printf("Line %d: %d\n", 6, test_output[6]==0x5DA0); 
-    printf("Line %d: %d\n", 7, test_output[7]==0x5FE0); 
-    printf("END TEST\n\n");
+    printf("ZER: ");
+    pass += test_output[0]==0x5020;
+    pass += test_output[1]==0x5260;
+    pass += test_output[2]==0x54A0;
+    pass += test_output[3]==0x56E0;
+    pass += test_output[4]==0x5920;
+    pass += test_output[5]==0x5B60;
+    pass += test_output[6]==0x5DA0;
+    pass += test_output[7]==0x5FE0;
+
+    if (pass < 8) printf("FAILED\n");
+    else printf("PASSED\n");
 }
 
 void sq(int r1, int r2, int r3, int val, operands_t operands, inst_t inst, char o3[])
@@ -270,47 +305,51 @@ void test_sq_rr()
     operands_t operands = O_RRR;
     inst_t inst;
     inst.ccode = CC_;
+
+    int pass = 0;
      
     sq(r1, r2, r3, val, operands, inst, o3);
 
-    printf("TEST\nSQ R0, R1\n");
-    printf("Line %d: %d\n", 0, test_output[0]==0x3401);
-    printf("Line %d: %d\n", 1, test_output[1]==0x0E01);
-    printf("Line %d: %d\n", 2, test_output[2]==0x0000);
-    printf("Line %d: %d\n", 3, test_output[3]==0x3601);
-    printf("Line %d: %d\n", 4, test_output[4]==0x0E01);
-    printf("Line %d: %d\n", 5, test_output[5]==0x0000);
-    printf("Line %d: %d\n", 6, test_output[6]==0x3801);
-    printf("Line %d: %d\n", 7, test_output[7]==0x0E01);
-    printf("Line %d: %d\n", 8, test_output[8]==0x0000);
-    printf("Line %d: %d\n", 9, test_output[9]==0x54A0);
-    printf("Line %d: %d\n", 10, test_output[10]==0x1481);
-    printf("Line %d: %d\n", 11, test_output[11]==0x0414);
-    printf("Line %d: %d\n", 12, test_output[12]==0x56E0);
-    printf("Line %d: %d\n", 13, test_output[13]==0x16C1);
-    printf("Line %d: %d\n", 14, test_output[14]==0x0411);
-    printf("Line %d: %d\n", 15, test_output[15]==0x5920);
-    printf("Line %d: %d\n", 16, test_output[16]==0x14A0);
-    printf("Line %d: %d\n", 17, test_output[17]==0x0205);
-    printf("Line %d: %d\n", 18, test_output[18]==0x94BF);
-    printf("Line %d: %d\n", 19, test_output[19]==0x14A1);
-    printf("Line %d: %d\n", 20, test_output[20]==0x16E0);
-    printf("Line %d: %d\n", 21, test_output[21]==0x0602);
-    printf("Line %d: %d\n", 22, test_output[22]==0x1921);
-    printf("Line %d: %d\n", 23, test_output[23]==0x5020);
-    printf("Line %d: %d\n", 24, test_output[24]==0x1003);
-    printf("Line %d: %d\n", 25, test_output[25]==0x14BF);
-    printf("Line %d: %d\n", 26, test_output[26]==0x03FD);
-    printf("Line %d: %d\n", 27, test_output[27]==0x1920);
-    printf("Line %d: %d\n", 28, test_output[28]==0x0C02);
-    printf("Line %d: %d\n", 29, test_output[29]==0x903F);
-    printf("Line %d: %d\n", 30, test_output[30]==0x1021);
-    printf("Line %d: %d\n", 31, test_output[31]==0x0E01);
-    printf("Line %d: %d\n", 32, test_output[32]==0x5020);
-    printf("Line %d: %d\n", 33, test_output[33]==0x25E0);
-    printf("Line %d: %d\n", 34, test_output[34]==0x27E2);
-    printf("Line %d: %d\n", 35, test_output[35]==0x29E4);
-    printf("END TEST\n\n");
+    printf("MLT R0, R1, R2: ");
+    pass += test_output[0]==0x3401;
+    pass += test_output[1]==0x0E01;
+    pass += test_output[2]==0x0000;
+    pass += test_output[3]==0x3601;
+    pass += test_output[4]==0x0E01;
+    pass += test_output[5]==0x0000;
+    pass += test_output[6]==0x3801;
+    pass += test_output[7]==0x0E01;
+    pass += test_output[8]==0x0000;
+    pass += test_output[9]==0x54A0;
+    pass += test_output[10]==0x1481;
+    pass += test_output[11]==0x0414;
+    pass += test_output[12]==0x56E0;
+    pass += test_output[13]==0x16C1;
+    pass += test_output[14]==0x0411;
+    pass += test_output[15]==0x5920;
+    pass += test_output[16]==0x14A0;
+    pass += test_output[17]==0x0205; 
+    pass += test_output[18]==0x94BF; 
+    pass += test_output[19]==0x14A1;
+    pass += test_output[20]==0x16E0;
+    pass += test_output[21]==0x0602; 
+    pass += test_output[22]==0x1921; 
+    pass += test_output[23]==0x5020;
+    pass += test_output[24]==0x1003;
+    pass += test_output[25]==0x14BF;
+    pass += test_output[26]==0x03FD;
+    pass += test_output[27]==0x1920;
+    pass += test_output[28]==0x0C02;
+    pass += test_output[29]==0x903F;
+    pass += test_output[30]==0x1021;
+    pass += test_output[31]==0x0E01;
+    pass += test_output[32]==0x5020;
+    pass += test_output[33]==0x25E0;
+    pass += test_output[34]==0x27E2;
+    pass += test_output[35]==0x29E4;
+
+    if (pass < 36) printf("FAILED\n");
+    else printf("PASSED\n");
 }
 
 //simplified write_value for testing purposes

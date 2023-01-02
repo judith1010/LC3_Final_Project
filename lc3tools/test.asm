@@ -1,4 +1,4 @@
 .ORIG x3000
-SUB R0, R1, R1
+;R0 = 4
+SQ R0, R0
 .END
-	
