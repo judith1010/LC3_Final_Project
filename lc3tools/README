@@ -17,6 +17,10 @@ input. (LRM cannot be tested in this way because it generates a random PC offset
 for LD every time it is assembled and so it will generate different machine code 
 each time it is run). Tests can be run by typing 'make tests' on the command line.
 
+To set up this version of LC-3, type './configure' and then 'make' into the command 
+line. When you are ready to assemble an LC-3 assembly file type 
+'./lc3as file_name.asm' into the command line. This will create a .obj file that can 
+be run by LC-3
 
 -----------------------------
    DESCRIPTION OF CONTENTS
